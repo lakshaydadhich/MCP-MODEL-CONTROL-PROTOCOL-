@@ -1,0 +1,22 @@
+{
+  "client": {
+    "model": "gemini-2.5-flash"
+  },
+  "servers": [
+    {
+      "name": "tour-places",
+      "url": "http://127.0.0.1:8001/mcp",
+      "tools": ["top_places_to_visit"]
+    },
+    {
+      "name": "tour-food",
+      "url": "http://127.0.0.1:8002/mcp",
+      "tools": ["top_food_to_try"]
+    },
+    {
+      "name": "tour-hotels",
+      "url": "http://127.0.0.1:8003/mcp",
+      "tools": ["top_hotels_to_stay"]
+    }
+  ]
+}
