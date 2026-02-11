@@ -10,7 +10,8 @@ from fastmcp import FastMCP
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env")
 
 # ---- Gemini init ------------------------------------------------------------
-GEMINI_MODEL = "models/gemini-2.5-flash"
+# GEMINI_MODEL = "models/gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
@@ -56,3 +57,62 @@ if __name__ == "__main__":
     # Default transport is stdio; for HTTP, run via FastMCP CLI, e.g.:
     #   fastmcp run servers/hotels_server.py:mcp --transport http --port 8003
     mcp.run()
+
+
+# import requests
+# from fastmcp import FastMCP
+
+# mcp = FastMCP("tour-hotels")
+
+
+# @mcp.tool
+# def top_hotels_to_stay(city: str) -> str:
+
+#     print(f"🛠 REAL TOOL EXECUTED → top_hotels_to_stay(city='{city}')")
+
+#     overpass_url = "https://overpass-api.de/api/interpreter"
+
+#     headers = {
+#         "User-Agent": "TravelMCPApp/1.0"
+#     }
+
+#     query = f"""
+#     [out:json][timeout:25];
+#     area["name"="{city}"]["boundary"="administrative"]->.searchArea;
+#     (
+#       node["tourism"="hotel"](area.searchArea);
+#       node["tourism"="guest_house"](area.searchArea);
+#     );
+#     out body 8;
+#     """
+
+#     try:
+#         response = requests.post(overpass_url, data=query, headers=headers, timeout=30)
+
+#         response.raise_for_status()
+
+#         data = response.json()
+#         elements = data.get("elements", [])
+
+#         hotels = []
+
+#         for el in elements:
+#             name = el.get("tags", {}).get("name")
+#             if name:
+#                 hotels.append(f"- {name}")
+
+#         if not hotels:
+#             return "⚠️ No hotels found."
+
+#         return "\n".join(hotels)
+
+#     except Exception as e:
+#         return f"❌ Overpass error: {str(e)}"
+
+
+# if __name__ == "__main__":
+#     mcp.run()
+
+
+
+

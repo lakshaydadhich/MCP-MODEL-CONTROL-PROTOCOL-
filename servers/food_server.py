@@ -1,56 +1,3 @@
-# import os
-# from pathlib import Path
-
-# from dotenv import load_dotenv
-# import google.generativeai as genai
-# from fastmcp import FastMCP
-
-# # ---- Load .env (project root) ----
-# load_dotenv(dotenv_path=Path(__file__).resolve().parents[1] / ".env")
-
-# # ---- Gemini init ----
-# GEMINI_MODEL = "models/gemini-2.5-flash"
-
-# api_key = os.getenv("GOOGLE_API_KEY")
-# if not api_key:
-#     raise RuntimeError(
-#         "Please set GOOGLE_API_KEY environment variable before starting food_server."
-#     )
-
-# genai.configure(api_key=api_key)
-# model = genai.GenerativeModel(GEMINI_MODEL)
-
-
-# # ---- FastMCP server ---------------------------------------------------------
-
-# mcp = FastMCP("tour-food")
-
-
-# @mcp.tool
-# def top_food_to_try(city: str) -> str:
-#     """
-#     Use Gemini to get iconic local dishes/foods to try in a city.
-
-#     Returns a human-readable bullet list for LLM consumption.
-#     """
-#     prompt = (
-#         "You are a foodie travel expert.\n\n"
-#         f"City: {city}\n\n"
-#         "List the top 8–10 must-try local dishes, snacks, or drinks in this city. "
-#         "For each item, include: name, what it is, and where/when locals typically eat it "
-#         "(e.g. street food, breakfast pastry, late-night snack, etc.).\n\n"
-#         "Answer in clear bullet points, no JSON, no code."
-#     )
-
-#     response = model.generate_content(prompt)
-#     return response.text or ""
-
-
-# if __name__ == "__main__":
-#     # Default transport is stdio; for HTTP, run via FastMCP CLI, e.g.:
-#     #   fastmcp run servers/food_server.py:mcp --transport http --port 8002
-#     mcp.run()
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -72,7 +19,8 @@ if not API_KEY:
 # ---------------------------------------------------------------------
 client = genai.Client(api_key=API_KEY)
 
-MODEL_NAME = "gemini-2.5-flash"
+# MODEL_NAME = "gemini-2.5-flash"
+MODEL_NAME = "gemini-2.5-flash-lite"
 
 # ---------------------------------------------------------------------
 # FastMCP Server
@@ -135,3 +83,59 @@ if __name__ == "__main__":
     # For HTTP:
     # fastmcp run servers/food_server.py:mcp --transport http --port 8002
     mcp.run()
+
+
+
+
+# import requests
+# from fastmcp import FastMCP
+
+# mcp = FastMCP("tour-food")
+
+
+# @mcp.tool()
+# def top_food_to_try(city: str) -> str:
+
+#     print(f"🛠 REAL TOOL EXECUTED → top_food_to_try(city='{city}')")
+
+#     overpass_url = "https://overpass-api.de/api/interpreter"
+
+#     headers = {
+#         "User-Agent": "TravelMCPApp/1.0"
+#     }
+
+#     query = f"""
+#     [out:json][timeout:25];
+#     area["name"="{city}"]["boundary"="administrative"]->.searchArea;
+#     (
+#       node["amenity"="restaurant"](area.searchArea);
+#     );
+#     out body 8;
+#     """
+
+#     try:
+#         response = requests.post(overpass_url, data=query, headers=headers, timeout=30)
+
+#         response.raise_for_status()
+
+#         data = response.json()
+#         elements = data.get("elements", [])
+
+#         restaurants = []
+
+#         for el in elements:
+#             name = el.get("tags", {}).get("name")
+#             if name:
+#                 restaurants.append(f"- {name}")
+
+#         if not restaurants:
+#             return "⚠️ No restaurants found."
+
+#         return "\n".join(restaurants)
+
+#     except Exception as e:
+#         return f"❌ Overpass error: {str(e)}"
+
+
+# if __name__ == "__main__":
+#     mcp.run()
